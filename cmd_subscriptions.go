@@ -34,10 +34,11 @@ func listSubscriptionsData(c *cli.Context) SubscriptionsResp {
 }
 
 func updateSubscriptions(c *cli.Context) error {
+	var idsToAdd, idsToDelete, currentIDs, list []int
+
 	urlStr := fmt.Sprintf("%s/subscriptions", URL)
 	eMail := setEmail(c)
 
-	var idsToAdd, idsToDelete, currentIDs, list []int
 	if c.String("add") != "" {
 		idsToAdd = strToIntArr(c.String("add"))
 	}

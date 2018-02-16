@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	ips, colorOn              bool
+	colorOn                   bool
 	version, appName          string
 	configSection, configFile string
 	edgeConfig                edgegrid.Config
@@ -138,6 +138,15 @@ func main() {
 							Name:  "effective-date",
 							Value: "",
 							Usage: "The ISO 8601 date(YYYY-MM-DD) the CIDR block starts serving traffic to your origin",
+						},
+						cli.StringFlag{
+							Name:  "services",
+							Value: "",
+							Usage: "Return only CIDR blocks for comma separeted list of services",
+						},
+						cli.BoolFlag{
+							Name:  "only-addresses",
+							Usage: "Show only CIDR Blocks addresses.",
 						},
 					},
 					Action: cmdCidrs,

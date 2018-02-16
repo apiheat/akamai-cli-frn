@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"strings"
 	"text/tabwriter"
 
 	"github.com/fatih/color"
@@ -37,6 +38,8 @@ func cmdCidrs(c *cli.Context) error {
 }
 
 func listCidrs(c *cli.Context, filter string) error {
+	var services string
+	onlyIPs := false
 	urlStr := fmt.Sprintf("%s/cidr-blocks", URL)
 	if filter != "?" {
 		urlStr = fmt.Sprintf("%s/cidr-blocks%s", URL, filter)
@@ -47,20 +50,47 @@ func listCidrs(c *cli.Context, filter string) error {
 	result, err := cidrsParse(data)
 	errorCheck(err)
 
-	printCidrs(result)
+	if c.String("services") != "" {
+		services = c.String("services")
+	}
+
+	if c.Bool("only-addresses") {
+		onlyIPs = true
+	}
+
+	printCidrs(result, services, onlyIPs)
 
 	return nil
 }
 
-func printCidrs(cidrs Cidrs) {
+func printCidrs(cidrs Cidrs, search string, onlyIPs bool) {
+	var searchSlice []string
 	color.Set(color.FgGreen)
 	fmt.Println("Firewall Rules Notification CIDR Blocks you are subscribed to:")
 	color.Unset()
+
+	if search != "" {
+		color.Set(color.FgYellow)
+		fmt.Printf("Showing CIDR Blocks only for: %s\n", search)
+		color.Unset()
+		searchSlice = strings.Split(search, ",")
+	}
+
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', 0)
-	fmt.Fprintln(w, fmt.Sprint("ID\tService Name (ID)\tCIDR\tPort\tActive\tLast Action"))
+	if onlyIPs {
+		fmt.Fprintln(w, fmt.Sprint("CIDR"))
+	} else {
+		fmt.Fprintln(w, fmt.Sprint("ID\tService Name (ID)\tCIDR\tPort\tActive\tLast Action"))
+	}
 	for _, f := range cidrs {
-		fmt.Fprintln(w, fmt.Sprintf("%v\t%s (%v)\t%s\t%s\t%s\t%s",
-			f.CidrID, f.Description, f.ServiceID, f.Cidr+f.CidrMask, f.Port, f.EffectiveDate, f.LastAction))
+		if stringInSlice(f.Description, searchSlice) {
+			if onlyIPs {
+				fmt.Fprintln(w, fmt.Sprintf("%s", f.Cidr+f.CidrMask))
+			} else {
+				fmt.Fprintln(w, fmt.Sprintf("%v\t%s (%v)\t%s\t%s\t%s\t%s",
+					f.CidrID, f.Description, f.ServiceID, f.Cidr+f.CidrMask, f.Port, f.EffectiveDate, f.LastAction))
+			}
+		}
 	}
 	w.Flush()
 }

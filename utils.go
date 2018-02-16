@@ -20,6 +20,22 @@ func errorCheck(e error) {
 	}
 }
 
+func printJSON(str interface{}) {
+	jsonRes, _ := json.MarshalIndent(str, "", "  ")
+	fmt.Printf("%+v\n", string(jsonRes))
+}
+
+func setEmail(c *cli.Context) string {
+	var id string
+	if c.NArg() == 0 {
+		log.Fatal("Please provide user e-mail")
+	}
+
+	id = c.Args().Get(0)
+	//verifyID(id)
+	return id
+}
+
 func setID(c *cli.Context) string {
 	var id string
 	if c.NArg() == 0 {
@@ -36,24 +52,6 @@ func verifyID(id string) {
 		errStr := fmt.Sprintf("SiteShield Map ID should be number, you provided: %q\n", id)
 		log.Fatal(errStr)
 	}
-}
-
-func printJSON(str interface{}) {
-	jsonRes, _ := json.MarshalIndent(str, "", "  ")
-	fmt.Printf("%+v\n", string(jsonRes))
-}
-
-func fetchData(urlPath, method string, body io.Reader) (result string) {
-	req, err := client.NewRequest(edgeConfig, method, urlPath, body)
-	errorCheck(err)
-
-	resp, err := client.Do(edgeConfig, req)
-	errorCheck(err)
-
-	defer resp.Body.Close()
-	byt, _ := ioutil.ReadAll(resp.Body)
-
-	return string(byt)
 }
 
 func servicesParse(in string) (services Services, err error) {
@@ -77,23 +75,29 @@ func subscriptionsParse(in string) (subscriptions SubscriptionsResp, err error) 
 	return
 }
 
-func difference(slice1 []string, slice2 []string) []string {
-	var diff []string
-	for _, s1 := range slice1 {
-		found := false
-		for _, s2 := range slice2 {
-			if s1 == s2 {
-				found = true
-				break
-			}
-		}
-		// String not found. We add it to return slice
-		if !found {
-			diff = append(diff, s1)
-		}
+func createSubscriptionBody(services []int, email string) io.Reader {
+	var obj SubscriptionsResp
+	for _, s := range services {
+		service := Subscription{ServiceID: s, Email: email}
+		obj.Subscriptions = append(obj.Subscriptions, service)
 	}
 
-	return diff
+	json, _ := json.Marshal(obj)
+
+	return strings.NewReader(string(json))
+}
+
+func fetchData(urlPath, method string, body io.Reader) (result string) {
+	req, err := client.NewRequest(edgeConfig, method, urlPath, body)
+	errorCheck(err)
+
+	resp, err := client.Do(edgeConfig, req)
+	errorCheck(err)
+
+	defer resp.Body.Close()
+	byt, _ := ioutil.ReadAll(resp.Body)
+
+	return string(byt)
 }
 
 func strToIntArr(str string) (intArr []int) {
@@ -106,14 +110,20 @@ func strToIntArr(str string) (intArr []int) {
 	return intArr
 }
 
-func remove(slice []int, s int) []int {
-	fmt.Println(slice[:s])
-	fmt.Println(slice[s+1:])
-	return append(slice[:s], slice[s+1:]...)
+func stringInSlice(a string, list []string) bool {
+	// We need that to not filter for empty list
+	if len(list) > 0 {
+		for _, b := range list {
+			if b == a {
+				return true
+			}
+		}
+		return false
+	}
+	return true
 }
 
 func deleteSlicefromSlice(slice, delete []int) []int {
-	//var out []int
 	for _, d := range delete {
 		for i := len(slice) - 1; i >= 0; i-- {
 			if slice[i] == d {
@@ -142,27 +152,4 @@ func removeDuplicates(elements []int) []int {
 	}
 	// Return the new slice.
 	return result
-}
-
-func setEmail(c *cli.Context) string {
-	var id string
-	if c.NArg() == 0 {
-		log.Fatal("Please provide user e-mail")
-	}
-
-	id = c.Args().Get(0)
-	//verifyID(id)
-	return id
-}
-
-func createSubscriptionBody(services []int, email string) io.Reader {
-	var obj SubscriptionsResp
-	for _, s := range services {
-		service := Subscription{ServiceID: s, Email: email}
-		obj.Subscriptions = append(obj.Subscriptions, service)
-	}
-
-	json, _ := json.Marshal(obj)
-
-	return strings.NewReader(string(json))
 }
