@@ -142,7 +142,7 @@ func main() {
 						cli.StringFlag{
 							Name:  "services",
 							Value: "",
-							Usage: "Return only CIDR blocks for comma separeted list of services",
+							Usage: "Return CIDR blocks  only for comma separated list of services",
 						},
 						cli.BoolFlag{
 							Name:  "only-addresses",
@@ -166,11 +166,11 @@ func main() {
 		},
 		{
 			Name:  "update",
-			Usage: "Update [subcommand]] `ID`",
+			Usage: "Update [subcommand]]",
 			Subcommands: []cli.Command{
 				{
 					Name:  "subscriptions",
-					Usage: "... subscribe or unsubscribe users to services",
+					Usage: "update subscriptions [parameters] User_Email",
 					Flags: []cli.Flag{
 						cli.StringFlag{
 							Name:  "add",
