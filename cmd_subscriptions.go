@@ -74,10 +74,10 @@ func updateSubscriptions(c *cli.Context) error {
 
 func printSubscriptions(subscriptions SubscriptionsResp) {
 	color.Set(color.FgGreen)
-	fmt.Println("Firewall Rules Notification Services you are subscribed to:")
+	fmt.Println("# Firewall Rules Notification Services you are subscribed to:")
 	color.Unset()
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', 0)
-	fmt.Fprintln(w, fmt.Sprint("ID\tName\tDescription\tE-Mail\tSign up Date"))
+	fmt.Fprintln(w, fmt.Sprint("# ID\tName\tDescription\tE-Mail\tSign up Date"))
 	for _, f := range subscriptions.Subscriptions {
 		fmt.Fprintln(w, fmt.Sprintf("%v\t%s\t%s\t%s\t%s", f.ServiceID, f.ServiceName, f.Description, f.Email, f.SignupDate))
 	}

@@ -45,10 +45,10 @@ func getService(c *cli.Context) error {
 
 func printServices(services Services) {
 	color.Set(color.FgGreen)
-	fmt.Println("Firewall Rules Notification Services you are subscribed to:")
+	fmt.Println("# Firewall Rules Notification Services you are subscribed to:")
 	color.Unset()
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', 0)
-	fmt.Fprintln(w, fmt.Sprint("ID\tName\tDescription"))
+	fmt.Fprintln(w, fmt.Sprint("# ID\tName\tDescription"))
 	for _, f := range services {
 		fmt.Fprintln(w, fmt.Sprintf("%v\t%s\t%s", f.ServiceID, f.ServiceName, f.Description))
 	}

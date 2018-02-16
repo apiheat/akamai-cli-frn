@@ -66,21 +66,21 @@ func listCidrs(c *cli.Context, filter string) error {
 func printCidrs(cidrs Cidrs, search string, onlyIPs bool) {
 	var searchSlice []string
 	color.Set(color.FgGreen)
-	fmt.Println("Firewall Rules Notification CIDR Blocks you are subscribed to:")
+	fmt.Println("# Firewall Rules Notification CIDR Blocks you are subscribed to:")
 	color.Unset()
 
 	if search != "" {
 		color.Set(color.FgYellow)
-		fmt.Printf("Showing CIDR Blocks only for: %s\n", search)
+		fmt.Printf("# Showing CIDR Blocks only for: %s\n", search)
 		color.Unset()
 		searchSlice = strings.Split(search, ",")
 	}
 
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', 0)
 	if onlyIPs {
-		fmt.Fprintln(w, fmt.Sprint("CIDR"))
+		fmt.Fprintln(w, fmt.Sprint("# CIDR"))
 	} else {
-		fmt.Fprintln(w, fmt.Sprint("ID\tService Name (ID)\tCIDR\tPort\tActive\tLast Action"))
+		fmt.Fprintln(w, fmt.Sprint("# ID\tService Name (ID)\tCIDR\tPort\tActive\tLast Action"))
 	}
 	for _, f := range cidrs {
 		if stringInSlice(f.Description, searchSlice) {
