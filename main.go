@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	colorOn                   bool
+	colorOn, raw              bool
 	version, appName          string
 	configSection, configFile string
 	edgeConfig                edgegrid.Config
@@ -106,6 +106,11 @@ func main() {
 			Name:        "no-color",
 			Usage:       "Disable color output",
 			Destination: &colorOn,
+		},
+		cli.BoolFlag{
+			Name:        "raw",
+			Usage:       "Show raw output. It will be JSON format",
+			Destination: &raw,
 		},
 	}
 

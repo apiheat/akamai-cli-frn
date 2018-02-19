@@ -47,6 +47,12 @@ func listCidrs(c *cli.Context, filter string) error {
 
 	data := fetchData(urlStr, "GET", nil)
 
+	if raw {
+		println(data)
+
+		return nil
+	}
+
 	result, err := cidrsParse(data)
 	errorCheck(err)
 

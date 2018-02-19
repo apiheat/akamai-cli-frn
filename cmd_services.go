@@ -21,6 +21,12 @@ func listServices(c *cli.Context) error {
 	urlStr := fmt.Sprintf("%s/services", URL)
 	data := fetchData(urlStr, "GET", nil)
 
+	if raw {
+		println(data)
+
+		return nil
+	}
+
 	result, err := servicesParse(data)
 	errorCheck(err)
 
@@ -34,6 +40,12 @@ func getService(c *cli.Context) error {
 
 	urlStr := fmt.Sprintf("%s/services/%s", URL, id)
 	data := fetchData(urlStr, "GET", nil)
+
+	if raw {
+		println(data)
+
+		return nil
+	}
 
 	result, err := servicesParse("[" + data + "]")
 	errorCheck(err)

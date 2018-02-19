@@ -19,18 +19,25 @@ func cmdUpdSubscriptions(c *cli.Context) error {
 }
 
 func listSubscriptions(c *cli.Context) error {
-	printSubscriptions(listSubscriptionsData(c))
-	return nil
-}
+	data := listSubscriptionsData(c)
 
-func listSubscriptionsData(c *cli.Context) SubscriptionsResp {
-	urlStr := fmt.Sprintf("%s/subscriptions", URL)
-	data := fetchData(urlStr, "GET", nil)
+	if raw {
+		println(data)
+
+		return nil
+	}
 
 	result, err := subscriptionsParse(data)
 	errorCheck(err)
 
-	return result
+	printSubscriptions(result)
+	return nil
+}
+
+func listSubscriptionsData(c *cli.Context) string {
+	urlStr := fmt.Sprintf("%s/subscriptions", URL)
+
+	return fetchData(urlStr, "GET", nil)
 }
 
 func updateSubscriptions(c *cli.Context) error {
@@ -46,7 +53,11 @@ func updateSubscriptions(c *cli.Context) error {
 		idsToDelete = strToIntArr(c.String("delete"))
 	}
 
-	for _, s := range listSubscriptionsData(c).Subscriptions {
+	dataCurrent := listSubscriptionsData(c)
+	dataParsed, err := subscriptionsParse(dataCurrent)
+	errorCheck(err)
+
+	for _, s := range dataParsed.Subscriptions {
 		currentIDs = append(currentIDs, s.ServiceID)
 	}
 	sort.Ints(currentIDs)
@@ -63,6 +74,12 @@ func updateSubscriptions(c *cli.Context) error {
 
 	body := createSubscriptionBody(list, eMail)
 	data := fetchData(urlStr, "PUT", body)
+
+	if raw {
+		println(data)
+
+		return nil
+	}
 
 	res, err := subscriptionsParse(data)
 	errorCheck(err)
