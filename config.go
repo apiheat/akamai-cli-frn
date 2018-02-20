@@ -6,6 +6,7 @@ import (
 	"github.com/akamai/AkamaiOPEN-edgegrid-golang/edgegrid"
 	"github.com/fatih/color"
 	"github.com/go-ini/ini"
+	"github.com/urfave/cli"
 )
 
 func config(configFile, configSection string) {
@@ -29,6 +30,7 @@ func config(configFile, configSection string) {
 				color.Set(color.FgRed)
 				fmt.Println("Error with section found, please check that all fields present")
 				color.Unset()
+				cli.NewExitError(errEdge.Error(), 1)
 			}
 		}
 	}

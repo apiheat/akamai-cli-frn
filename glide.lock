@@ -1,5 +1,5 @@
-hash: afb711239e290b9417f7dc400575a90a9b44d233b3f4adeff65574e0fa88724b
-updated: 2018-02-16T00:52:09.774649+01:00
+hash: 14f48ddf801ac79df052670c795767cf1c4b9dd1e57bc6cc1026b32c0c785d55
+updated: 2018-02-20T16:33:09.46464+01:00
 imports:
 - name: github.com/akamai/AkamaiOPEN-edgegrid-golang
   version: 80e2f722f869fc79ff6c745168781e0771e13732
