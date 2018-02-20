@@ -202,7 +202,7 @@ func main() {
 			color.NoColor = true
 		}
 
-		edgeConfig = config(configFile, configSection)
+		config(configFile, configSection)
 		return nil
 	}
 
