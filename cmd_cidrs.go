@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"sort"
 	"strings"
 	"text/tabwriter"
 
@@ -39,7 +40,6 @@ func cmdCidrs(c *cli.Context) error {
 
 func listCidrs(c *cli.Context, filter string) error {
 	var services string
-	onlyIPs := false
 	urlStr := fmt.Sprintf("%s/cidr-blocks", URL)
 	if filter != "?" {
 		urlStr = fmt.Sprintf("%s/cidr-blocks%s", URL, filter)
@@ -61,42 +61,66 @@ func listCidrs(c *cli.Context, filter string) error {
 	}
 
 	if c.Bool("only-addresses") {
-		onlyIPs = true
+		printCidrs(result, services)
+	} else {
+		printData(result, services)
 	}
-
-	printCidrs(result, services, onlyIPs)
 
 	return nil
 }
 
-func printCidrs(cidrs Cidrs, search string, onlyIPs bool) {
-	var searchSlice []string
+func printData(cidrs Cidrs, search string) {
 	color.Set(color.FgGreen)
 	fmt.Println("# Firewall Rules Notification CIDR Blocks you are subscribed to:")
 	color.Unset()
 
-	if search != "" {
-		color.Set(color.FgYellow)
-		fmt.Printf("# Showing CIDR Blocks only for: %s\n", search)
-		color.Unset()
-		searchSlice = strings.Split(search, ",")
-	}
+	searchSlice := searchServices(search)
 
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', 0)
-	if onlyIPs {
-		fmt.Fprintln(w, fmt.Sprint("# CIDR"))
-	} else {
-		fmt.Fprintln(w, fmt.Sprint("# ID\tService Name (ID)\tCIDR\tPort\tActive\tLast Action"))
-	}
+	fmt.Fprintln(w, fmt.Sprint("# ID\tService Name (ID)\tCIDR\tPort\tActive\tLast Action"))
 	for _, f := range cidrs {
 		if stringInSlice(f.Description, searchSlice) {
-			if onlyIPs {
-				fmt.Fprintln(w, fmt.Sprintf("%s", f.Cidr+f.CidrMask))
-			} else {
-				fmt.Fprintln(w, fmt.Sprintf("%v\t%s (%v)\t%s\t%s\t%s\t%s",
-					f.CidrID, f.Description, f.ServiceID, f.Cidr+f.CidrMask, f.Port, f.EffectiveDate, f.LastAction))
-			}
+			fmt.Fprintln(w, fmt.Sprintf("%v\t%s (%v)\t%s\t%s\t%s\t%s",
+				f.CidrID, f.Description, f.ServiceID, f.Cidr+f.CidrMask, f.Port, f.EffectiveDate, f.LastAction))
 		}
 	}
 	w.Flush()
+}
+
+func printCidrs(cidrs Cidrs, search string) {
+	color.Set(color.FgGreen)
+	fmt.Println("# Firewall Rules Notification CIDR Blocks you are subscribed to:")
+	color.Unset()
+
+	searchSlice := searchServices(search)
+	ips := make([]string, len(cidrs))
+	for _, f := range cidrs {
+		if stringInSlice(f.Description, searchSlice) {
+			ips = append(ips, f.Cidr+f.CidrMask)
+		}
+	}
+	sort.Strings(ips)
+	cidr := uniqCidrs(ips)
+
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', 0)
+	fmt.Fprintln(w, fmt.Sprint("# Total number of CIDR Blocks: ", len(cidr)))
+	for _, ip := range cidr {
+		fmt.Fprintln(w, fmt.Sprintf("%s", ip))
+	}
+
+	w.Flush()
+
+	return
+}
+
+func searchServices(searchStr string) (searchSlice []string) {
+	if searchStr != "" {
+		color.Set(color.FgYellow)
+		fmt.Printf("# Showing CIDR Blocks only for: %s\n", searchStr)
+		color.Unset()
+
+		searchSlice = strings.Split(searchStr, ",")
+	}
+
+	return searchSlice
 }

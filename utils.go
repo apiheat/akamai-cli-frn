@@ -153,3 +153,24 @@ func removeDuplicates(elements []int) []int {
 	// Return the new slice.
 	return result
 }
+
+func uniqCidrs(cidrs []string) []string {
+	// Use map to record duplicates as we find them.
+	encountered := map[string]bool{}
+	result := []string{}
+
+	for v := range cidrs {
+		if encountered[cidrs[v]] == true {
+			// Do not add duplicate.
+		} else {
+			// Record this element as an encountered element.
+			encountered[cidrs[v]] = true
+			// Append to result slice.
+			if cidrs[v] != "" {
+				result = append(result, cidrs[v])
+			}
+		}
+	}
+	// Return the new slice.
+	return result
+}
