@@ -3,8 +3,8 @@
 
 <!--ts-->
    * [Akamai CLI for Firewall Rules Notifications](#akamai-cli-for-firewall-rules-notifications)
-         * [Local Install, if you choose not to use the akamai package manager](#local-install-if-you-choose-not-to-use-the-akamai-package-manager)
-         * [Credentials](#credentials)
+      * [Local Install, if you choose not to use the akamai package manager](#local-install-if-you-choose-not-to-use-the-akamai-package-manager)
+      * [Credentials](#credentials)
       * [Overview](#overview)
       * [Main Command Usage](#main-command-usage)
          * [Raw output. (JSON)](#raw-output-json)
