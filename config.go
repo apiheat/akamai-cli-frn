@@ -35,5 +35,9 @@ func config(configFile, configSection string) {
 		}
 	}
 
+	color.Set(color.FgBlue)
+	fmt.Printf("# Credentials used: [%s] from %s\n", configSection, configFile)
+	color.Unset()
+
 	return
 }

@@ -18,3 +18,7 @@ build/
 dist/
 
 akamai-cli-frn
+
+# toc
+README.md.orig*
+README.md.toc*
