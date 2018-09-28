@@ -45,7 +45,7 @@ func updateSubscriptions(c *cli.Context) error {
 	var idsToAdd, idsToDelete, currentIDs, list []int
 
 	urlStr := fmt.Sprintf("%s/subscriptions", URL)
-	eMail := common.SetStringId(c)
+	eMail := common.SetStringId(c, "Please provide user e-mail")
 
 	if c.String("add") != "" {
 		idsToAdd = common.StringToIntArr(c.String("add"))
