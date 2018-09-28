@@ -9,6 +9,7 @@ import (
 	"strings"
 	"text/tabwriter"
 
+	common "github.com/apiheat/akamai-cli-common"
 	"github.com/fatih/color"
 	"github.com/urfave/cli"
 )
@@ -54,7 +55,7 @@ func listCidrs(c *cli.Context, filter string) error {
 	}
 
 	result, err := cidrsParse(data)
-	errorCheck(err)
+	common.ErrorCheck(err)
 
 	if c.String("services") != "" {
 		services = c.String("services")
@@ -79,7 +80,7 @@ func printData(cidrs Cidrs, search string) {
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', 0)
 	fmt.Fprintln(w, fmt.Sprint("# ID\tService Name (ID)\tCIDR\tPort\tActive\tLast Action"))
 	for _, f := range cidrs {
-		if stringInSlice(f.Description, searchSlice) {
+		if common.IsStringInSlice(f.Description, searchSlice) {
 			fmt.Fprintln(w, fmt.Sprintf("%v\t%s (%v)\t%s\t%s\t%s\t%s",
 				f.CidrID, f.Description, f.ServiceID, f.Cidr+f.CidrMask, f.Port, f.EffectiveDate, f.LastAction))
 		}
@@ -95,12 +96,12 @@ func printCidrs(cidrs Cidrs, search string) {
 	searchSlice := searchServices(search)
 	ips := make([]string, len(cidrs))
 	for _, f := range cidrs {
-		if stringInSlice(f.Description, searchSlice) {
+		if common.IsStringInSlice(f.Description, searchSlice) {
 			ips = append(ips, f.Cidr+f.CidrMask)
 		}
 	}
 	sort.Strings(ips)
-	cidr := uniqCidrs(ips)
+	cidr := common.RemoveStringDuplicates(ips)
 
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', 0)
 	fmt.Fprintln(w, fmt.Sprint("# Total number of CIDR Blocks: ", len(cidr)))

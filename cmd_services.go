@@ -5,6 +5,7 @@ import (
 	"os"
 	"text/tabwriter"
 
+	common "github.com/apiheat/akamai-cli-common"
 	"github.com/fatih/color"
 	"github.com/urfave/cli"
 )
@@ -28,7 +29,7 @@ func listServices(c *cli.Context) error {
 	}
 
 	result, err := servicesParse(data)
-	errorCheck(err)
+	common.ErrorCheck(err)
 
 	printServices(result)
 
@@ -36,7 +37,7 @@ func listServices(c *cli.Context) error {
 }
 
 func getService(c *cli.Context) error {
-	id := setID(c)
+	id := common.SetIntID(c, "Please provide ID for a service")
 
 	urlStr := fmt.Sprintf("%s/services/%s", URL, id)
 	data := fetchData(urlStr, "GET", nil)
@@ -48,7 +49,7 @@ func getService(c *cli.Context) error {
 	}
 
 	result, err := servicesParse("[" + data + "]")
-	errorCheck(err)
+	common.ErrorCheck(err)
 
 	printServices(result)
 

@@ -6,6 +6,7 @@ import (
 	"sort"
 	"text/tabwriter"
 
+	common "github.com/apiheat/akamai-cli-common"
 	"github.com/fatih/color"
 	"github.com/urfave/cli"
 )
@@ -28,7 +29,7 @@ func listSubscriptions(c *cli.Context) error {
 	}
 
 	result, err := subscriptionsParse(data)
-	errorCheck(err)
+	common.ErrorCheck(err)
 
 	printSubscriptions(result)
 	return nil
@@ -44,18 +45,18 @@ func updateSubscriptions(c *cli.Context) error {
 	var idsToAdd, idsToDelete, currentIDs, list []int
 
 	urlStr := fmt.Sprintf("%s/subscriptions", URL)
-	eMail := setEmail(c)
+	eMail := common.SetStringId(c)
 
 	if c.String("add") != "" {
-		idsToAdd = strToIntArr(c.String("add"))
+		idsToAdd = common.StringToIntArr(c.String("add"))
 	}
 	if c.String("delete") != "" {
-		idsToDelete = strToIntArr(c.String("delete"))
+		idsToDelete = common.StringToIntArr(c.String("delete"))
 	}
 
 	dataCurrent := listSubscriptionsData(c)
 	dataParsed, err := subscriptionsParse(dataCurrent)
-	errorCheck(err)
+	common.ErrorCheck(err)
 
 	for _, s := range dataParsed.Subscriptions {
 		currentIDs = append(currentIDs, s.ServiceID)
@@ -64,12 +65,12 @@ func updateSubscriptions(c *cli.Context) error {
 
 	currentIDs = append(currentIDs, idsToAdd...)
 	sort.Ints(currentIDs)
-	result := removeDuplicates(currentIDs)
+	result := common.RemoveIntDuplicates(currentIDs)
 
 	if c.String("delete") == "" {
 		list = result
 	} else {
-		list = deleteSlicefromSlice(result, idsToDelete)
+		list = common.DeleteSlicefromSlice(result, idsToDelete)
 	}
 
 	body := createSubscriptionBody(list, eMail)
@@ -82,7 +83,7 @@ func updateSubscriptions(c *cli.Context) error {
 	}
 
 	res, err := subscriptionsParse(data)
-	errorCheck(err)
+	common.ErrorCheck(err)
 
 	printSubscriptions(res)
 
