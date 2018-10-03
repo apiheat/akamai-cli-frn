@@ -69,9 +69,8 @@ COMMANDS:
      help, h   Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --config FILE, -c FILE   Location of the credentials FILE (default: "/Users/partamonov/.edgerc") [$AKAMAI_EDGERC]
-   --no-color               Disable color output
-   --raw                    Show raw output. It will be JSON format
+   --config FILE, -c FILE   Location of the credentials FILE (default: "/Users/USER_NAME/.edgerc") [$AKAMAI_EDGERC_CONFIG]
+   --debug value            Debug Level [$AKAMAI_EDGERC_DEBUGLEVEL]
    --section NAME, -s NAME  NAME of section to use from credentials file (default: "default") [$AKAMAI_EDGERC_SECTION]
    --help, -h               show help
    --version, -v            print the version

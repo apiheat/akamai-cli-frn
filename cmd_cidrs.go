@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"regexp"
 	"sort"
@@ -10,6 +9,9 @@ import (
 	"text/tabwriter"
 
 	common "github.com/apiheat/akamai-cli-common"
+	edgegrid "github.com/apiheat/go-edgegrid"
+	log "github.com/sirupsen/logrus"
+
 	"github.com/fatih/color"
 	"github.com/urfave/cli"
 )
@@ -41,36 +43,31 @@ func cmdCidrs(c *cli.Context) error {
 
 func listCidrs(c *cli.Context, filter string) error {
 	var services string
-	urlStr := fmt.Sprintf("%s/cidr-blocks", URL)
-	if filter != "?" {
-		urlStr = fmt.Sprintf("%s/cidr-blocks%s", URL, filter)
+	if filter == "?" {
+		filter = ""
 	}
+	data, _, err := apiClient.FRN.ListCIDRBlocks(filter)
+	common.ErrorCheck(err)
 
-	data := fetchData(urlStr, "GET", nil)
-
-	if raw {
-		println(data)
-
+	if c.String("output") == "json" {
+		common.OutputJSON(data)
 		return nil
 	}
-
-	result, err := cidrsParse(data)
-	common.ErrorCheck(err)
 
 	if c.String("services") != "" {
 		services = c.String("services")
 	}
 
 	if c.Bool("only-addresses") {
-		printCidrs(result, services)
+		printCidrs(data, services)
 	} else {
-		printData(result, services)
+		printData(data, services)
 	}
 
 	return nil
 }
 
-func printData(cidrs Cidrs, search string) {
+func printData(cidrs *edgegrid.AkamaiFRNCidrs, search string) {
 	color.Set(color.FgGreen)
 	fmt.Println("# Firewall Rules Notification CIDR Blocks you are subscribed to:")
 	color.Unset()
@@ -79,7 +76,7 @@ func printData(cidrs Cidrs, search string) {
 
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', 0)
 	fmt.Fprintln(w, fmt.Sprint("# ID\tService Name (ID)\tCIDR\tPort\tActive\tLast Action"))
-	for _, f := range cidrs {
+	for _, f := range *cidrs {
 		if common.IsStringInSlice(f.Description, searchSlice) {
 			fmt.Fprintln(w, fmt.Sprintf("%v\t%s (%v)\t%s\t%s\t%s\t%s",
 				f.CidrID, f.Description, f.ServiceID, f.Cidr+f.CidrMask, f.Port, f.EffectiveDate, f.LastAction))
@@ -88,14 +85,14 @@ func printData(cidrs Cidrs, search string) {
 	w.Flush()
 }
 
-func printCidrs(cidrs Cidrs, search string) {
+func printCidrs(cidrs *edgegrid.AkamaiFRNCidrs, search string) {
 	color.Set(color.FgGreen)
 	fmt.Println("# Firewall Rules Notification CIDR Blocks you are subscribed to:")
 	color.Unset()
 
 	searchSlice := searchServices(search)
-	ips := make([]string, len(cidrs))
-	for _, f := range cidrs {
+	ips := make([]string, len(*cidrs))
+	for _, f := range *cidrs {
 		if common.IsStringInSlice(f.Description, searchSlice) {
 			ips = append(ips, f.Cidr+f.CidrMask)
 		}

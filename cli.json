@@ -7,7 +7,7 @@
       "name": "frn",
       "version": "0.0.4",
       "description": "Firewall Rules Notifications management",
-      "bin": "https://github.com/partamonov/akamai-cli-frn/releases/download/v{{.Version}}/akamai-{{.Name}}_{{.OS}}_{{.Arch}}{{.BinSuffix}}"
+      "bin": "https://github.com/apiheat/akamai-cli-frn/releases/download/v{{.Version}}/akamai-{{.Name}}_{{.OS}}_{{.Arch}}{{.BinSuffix}}"
     }
   ]
 }
