@@ -2,20 +2,20 @@
 
 
 [[projects]]
-  digest = "1:76d881212e54501b4337b4b480537ff6cd8189768fef9343d1284cb2fac71da5"
+  digest = "1:55ae67aaddde24da9d8655c974ce2070256badf8ee29a073cb3137275f2ce113"
   name = "github.com/apiheat/akamai-cli-common"
   packages = ["."]
   pruneopts = "UT"
-  revision = "1f0a3de08e818f7d591c28671d14133b995eb670"
-  version = "v1.0.0"
+  revision = "bc63d1e41f6e9feeaaf5d607aa388237053e5520"
+  version = "v1.1.0"
 
 [[projects]]
-  digest = "1:f97f1cb4dcaf58645b5f11898c25945f2f777c7f1e726f9f9773d587129f4a02"
+  digest = "1:1b392c3b84b47a946778a7a8f51e8b1f80737ae0bd4ac7e30b1567ed43379706"
   name = "github.com/apiheat/go-edgegrid"
   packages = ["."]
   pruneopts = "UT"
-  revision = "8ecb9c0fe485e5134d5079c38bdbd4848ab4608a"
-  version = "v3.0.0"
+  revision = "a847ff7cc6103aef7256b83fb5ad6fc26c6b88ca"
+  version = "v3.1.0"
 
 [[projects]]
   digest = "1:865079840386857c809b72ce300be7580cb50d3d3129ce11bf9aa6ca2bc1934a"
@@ -34,12 +34,12 @@
   version = "v1.38.3"
 
 [[projects]]
-  branch = "master"
-  digest = "1:f44d34fda864bed6d6c71514cd40b2ee097e6e67f745d5d014113e1faa5af8b7"
+  digest = "1:0a69a1c0db3591fcefb47f115b224592c8dfa4368b7ba9fae509d5e16cdc95c8"
   name = "github.com/konsorten/go-windows-terminal-sequences"
   packages = ["."]
   pruneopts = "UT"
-  revision = "b729f2633dfe35f4d1d8a32385f6685610ce1cb5"
+  revision = "5c8c8bd35d3832f5d134ae1e1e375b69a4d25242"
+  version = "v1.0.1"
 
 [[projects]]
   digest = "1:c658e84ad3916da105a761660dcaeb01e63416c8ec7bc62256a9b411a05fcd67"
@@ -99,14 +99,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:8375ca24f586acd7b9a0ec8c6f24a6706a3ffa3dd7a80fd0e6e51caba139408f"
+  digest = "1:8a35cf7e4a316cee63d627d7de15b81901a19f8a3f9aff0d1a80c746a57234d6"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "af653ce8b74f808d092db8ca9741fbb63d2a469d"
+  revision = "8469e314837c2e2471561de5c47bbf8bfd0d9099"
 
 [solve-meta]
   analyzer-name = "dep"
