@@ -154,5 +154,5 @@ In order to develop the tool with us do the following:
 1. Make sure solution builds properly ( feel free to add tests )
 
    ```shell
-   go build -ldflags="-s -w -X main.appVer=v1.2.3 -X main.appName=akamai-cli-frn" -o akamai-cli-frn
+   go build -ldflags="-s -w -X main.appVer=1.2.3 -X main.appName=$(basename `pwd`)"
    ```
