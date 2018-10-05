@@ -1,4 +1,5 @@
 # Akamai CLI for Firewall Rules Notifications
+
 The Akamai Firewall Rules Notification Kit is a set of go libraries that wraps Akamai's {OPEN} APIs to let you manage who receives notifications about changes Akamai makes to IP addresses. You can subscribe or unsubscribe users to notifications for specific services, retrieve subscription and service information, and get CIDR block information with which to update your firewall rules.
 
 Should you miss something we *gladly accept patches* :)
@@ -8,11 +9,12 @@ CLI uses custom [Akamai API client](https://github.com/apiheat/go-edgegrid)
 ## Configuration & Installation
 
 ### Credentials
+
 Set up your credential files as described in the [authorization](https://developer.akamai.com/introduction/Prov_Creds.html) and [credentials](https://developer.akamai.com/introduction/Conf_Client.html) sections of the getting started guide on developer.akamai.com.
 
 Tools expect proper format of sections in edgerc file which example is shown below
 
->*NOTE:* Default file location is *~/.edgerc*
+*NOTE:* Default file location is *~/.edgerc*
 
 ```
 [default]
@@ -23,16 +25,19 @@ client_token = XXXXXXXXXXXX
 ```
 
 In order to change section which is being actively used you can
+
 * change it via `--config parameter` of the tool itself
 * change it via env variable `export AKAMAI_EDGERC_CONFIG=/Users/jsmitsh/.edgerc`
 
 In order to change section which is being actively used you can
+
 * change it via `--section parameter` of the tool itself
 * change it via env variable `export AKAMAI_EDGERC_SECTION=mycustomsection`
 
 >*NOTE:* Make sure your API client do have appropriate scopes enabled
 
 ### Installation
+
 The tool can be used as a stand-alone binary or in conjuction with [Akamai CLI](https://developer.akamai.com/cli).
 
 #### Akamai-cli ( recommended )
@@ -44,6 +49,7 @@ Execute the following from console
 ```
 
 #### Stand-alone
+
 As part of automated releases/builds you can download latest version from the project release page
 
 ## Usage
@@ -91,6 +97,7 @@ You can list all CIDR Blocks associated with services to which you subscribed
 ```
 
 You can filter results by Akamai API supported flags:
+
 * --last-action:    Return only CIDR blocks with a change status of add, update, or delete.
 * --effective-date: The ISO 8601 date(YYYY-MM-DD) the CIDR block starts serving traffic to your origin
 
@@ -109,13 +116,16 @@ akamai frn list cidr --services "SiteShield + Secure Edge Staging Network,Edge S
 Some times you may need to get only CIDRs as output to process then with xargs or in any other way. You can do that with `--only-addresses` flag
 
 ### Update commands
+
 You can subscribe to any service you want and unsubscribe too with `update` command
 
 There are 2 flags:
+
 * `--add`    comma(',') separated list of Service IDs to which you want to subscribe
 * `--delete` comma(',') separated list of Service IDs to which you want to unsubscribe
 
 Please take a note that the list of required services created in the following way:
+
 1. We get your `current` subscriptions from Akamai
 1. We append `add` list to `current`
 1. We sort and uniq the `result` list
@@ -123,6 +133,7 @@ Please take a note that the list of required services created in the following w
 1. We send to Akamai the `result` list
 
 If user had subscriptions for services with ID 6 and 7, then after running the following command he will be subscribed too same list
+
 ```shell
 > akamai frn --add "3,6"--delete "3" user@e-mail.com
 ```
