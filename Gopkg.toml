@@ -27,15 +27,19 @@
 
 [[constraint]]
   name = "github.com/apiheat/akamai-cli-common"
-  version = "^1.0.0"
+  version = "^2.0.0"
 
 [[constraint]]
   name = "github.com/apiheat/go-edgegrid"
-  version = "^3.0.0"
+  version = "^5.0.0"
 
 [[constraint]]
   name = "github.com/fatih/color"
   version = "1.7.0"
+
+[[constraint]]
+  name = "github.com/thedevsaddam/gojsonq"
+  version = "^2.2.0"
 
 [[constraint]]
   name = "github.com/sirupsen/logrus"

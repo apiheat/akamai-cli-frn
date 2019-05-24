@@ -63,7 +63,7 @@ else
     echo "git add -A && git commit -a -m '$comment'"
     git add -A && git commit -a -m "$comment"
     echo "git tag -a v$version -m '$comment'"
-    git tag -a v$version -m '$comment'
+    git tag -a v$version -m "$comment"
     echo "git push origin master --tags"
     git push origin master --tags
 fi

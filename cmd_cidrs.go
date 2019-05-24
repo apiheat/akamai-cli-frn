@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"regexp"
@@ -11,6 +12,7 @@ import (
 	common "github.com/apiheat/akamai-cli-common"
 	edgegrid "github.com/apiheat/go-edgegrid"
 	log "github.com/sirupsen/logrus"
+	"github.com/thedevsaddam/gojsonq"
 
 	"github.com/fatih/color"
 	"github.com/urfave/cli"
@@ -49,30 +51,45 @@ func listCidrs(c *cli.Context, filter string) error {
 	data, _, err := apiClient.FRN.ListCIDRBlocks(filter)
 	common.ErrorCheck(err)
 
-	if c.String("output") == "json" {
-		common.OutputJSON(data)
-		return nil
-	}
-
 	if c.String("services") != "" {
 		services = c.String("services")
 	}
 
 	if c.Bool("only-addresses") {
-		printCidrs(data, services)
-	} else {
-		printData(data, services)
+		printCidrs(data, services, c.String("output"))
+
+		return nil
 	}
+
+	printData(data, services, c.String("output"))
 
 	return nil
 }
 
-func printData(cidrs *edgegrid.AkamaiFRNCidrs, search string) {
+func jQ(cidrs *edgegrid.FRNCidrs) *gojsonq.JSONQ {
+	b, err := json.Marshal(cidrs)
+	if err != nil {
+		log.Fatal(err)
+		return nil
+	}
+
+	return gojsonq.New().FromString(string(b))
+}
+
+func printData(cidrs *edgegrid.FRNCidrs, search, outputFormat string) {
+	searchSlice := searchServices(search)
+
+	if outputFormat == "json" {
+		jq := jQ(cidrs)
+		res := jq.Where("description", "in", searchSlice)
+		common.OutputJSON(res.Get())
+
+		return
+	}
+
 	color.Set(color.FgGreen)
 	fmt.Println("# Firewall Rules Notification CIDR Blocks you are subscribed to:")
 	color.Unset()
-
-	searchSlice := searchServices(search)
 
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', 0)
 	fmt.Fprintln(w, fmt.Sprint("# ID\tService Name (ID)\tCIDR\tPort\tActive\tLast Action"))
@@ -85,12 +102,21 @@ func printData(cidrs *edgegrid.AkamaiFRNCidrs, search string) {
 	w.Flush()
 }
 
-func printCidrs(cidrs *edgegrid.AkamaiFRNCidrs, search string) {
+func printCidrs(cidrs *edgegrid.FRNCidrs, search, outputFormat string) {
+	searchSlice := searchServices(search)
+
+	if outputFormat == "json" {
+		jq := jQ(cidrs)
+		res := jq.Where("description", "in", searchSlice).Pluck("cidr")
+		common.OutputJSON(res)
+
+		return
+	}
+
 	color.Set(color.FgGreen)
 	fmt.Println("# Firewall Rules Notification CIDR Blocks you are subscribed to:")
 	color.Unset()
 
-	searchSlice := searchServices(search)
 	ips := make([]string, len(*cidrs))
 	for _, f := range *cidrs {
 		if common.IsStringInSlice(f.Description, searchSlice) {
